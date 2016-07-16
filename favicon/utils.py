@@ -45,6 +45,13 @@ def generate(source_file, storage, prefix=None, replace=False, fill=None):
                 return
         content = File(output_file, name)
         storage._save(name, content)
+
+    def save_PNG(img, output_name, size):
+        img.thumbnail(size=size, resample=Image.ANTIALIAS)
+        output_file = BytesIO()
+        img.save(output_file, format='PNG')
+        write_file(output_file, output_name)
+        
     # Save ICO
     img = Image.open(source_file)
     output_file = BytesIO()
@@ -53,24 +60,13 @@ def generate(source_file, storage, prefix=None, replace=False, fill=None):
     # Save PNG
     for size in PNG_SIZES:
         img = Image.open(source_file)
-        output_file = BytesIO()
-        output_name = 'favicon-%s.png' % size
-        img.thumbnail(size=(size, size), resample=Image.ANTIALIAS)
-        img.save(output_file, format='PNG')
-        write_file(output_file, output_name)
+        save_PNG(img, 'favicon-%s.png' % size, (size, size))
     for size, output_name in WINDOWS_PNG_SIZES:
         img = Image.open(source_file)
-        output_file = BytesIO()
-        img.thumbnail(size=size, resample=Image.ANTIALIAS)
-        img.save(output_file, format='PNG')
-        write_file(output_file, output_name)
+        save_PNG(img, output_name, size)
     for size in FILLED_SIZES:
         img = alpha_to_color(Image.open(source_file), fill)
-        output_file = BytesIO()
-        output_name = 'favicon-precomposed-%s.png' % size
-        img.thumbnail(size=(size, size), resample=Image.ANTIALIAS)
-        img.save(output_file, format='PNG')
-        write_file(output_file, output_name)        
+        save_PNG(img, 'favicon-precomposed-%s.png' % size, (size, size))
     # Create ieconfig.xml
     output_name = 'ieconfig.xml'
     output_file = StringIO()
