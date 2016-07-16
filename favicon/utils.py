@@ -19,7 +19,7 @@ def alpha_to_color(image, color=(255, 255, 255)):
     bg.paste(image, image)
     return color and bg or image
 
-def generate(source_file, storage, prefix=None, replace=False):
+def generate(source_file, storage, prefix=None, replace=False, fill=None):
     """
     Creates favicons from a source file and upload into storage.
     This also create the ieconfig.xml file.
@@ -64,6 +64,13 @@ def generate(source_file, storage, prefix=None, replace=False):
         img.thumbnail(size=size, resample=Image.ANTIALIAS)
         img.save(output_file, format='PNG')
         write_file(output_file, output_name)
+    for size in FILLED_SIZES:
+        img = alpha_to_color(Image.open(source_file), fill)
+        output_file = BytesIO()
+        output_name = 'favicon-precomposed-%s.png' % size
+        img.thumbnail(size=(size, size), resample=Image.ANTIALIAS)
+        img.save(output_file, format='PNG')
+        write_file(output_file, output_name)        
     # Create ieconfig.xml
     output_name = 'ieconfig.xml'
     output_file = StringIO()
