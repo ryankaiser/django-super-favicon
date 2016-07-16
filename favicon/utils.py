@@ -51,7 +51,6 @@ def generate(source_file, storage, prefix=None, replace=False, fill=None):
         output_file = BytesIO()
         img.save(output_file, format='PNG')
         write_file(output_file, output_name)
-        
     # Save ICO
     img = Image.open(source_file)
     output_file = BytesIO()
@@ -96,5 +95,8 @@ def delete(storage, prefix=None):
         name = 'favicon-%s.png' % size
         delete_file(name)
     for _, name in WINDOWS_PNG_SIZES:
+        delete_file(name)
+    for size in FILLED_SIZES:
+        name = 'favicon-precomposed-%s.png' % size
         delete_file(name)
     delete_file('ieconfig.xml')
